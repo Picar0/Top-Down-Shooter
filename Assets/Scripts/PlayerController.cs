@@ -37,13 +37,17 @@ public class PlayerController : MonoBehaviour
         {
             Weapon.instance.shoot();
         }
+        else if (Input.GetButton("Shoot"))
+        {
+            Weapon.instance.ShootContinuous();
+        }
     }
 
     private void PlayerMovement()
     {
         Vector3 mousePos = Input.mousePosition;
-        mousePos = _cam.ScreenToWorldPoint(new Vector3(mousePos.x,mousePos.y,_cam.transform.position.y - transform.position.y));
-        targetRotation = Quaternion.LookRotation(mousePos - new Vector3(transform.position.x,0,transform.position.z));
+        mousePos = _cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, _cam.transform.position.y - transform.position.y));
+        targetRotation = Quaternion.LookRotation(mousePos - new Vector3(transform.position.x, 0, transform.position.z));
         transform.eulerAngles = Vector3.up * Mathf.MoveTowardsAngle(transform.eulerAngles.y, targetRotation.eulerAngles.y, _rotationSpeed * Time.deltaTime);
 
         Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
