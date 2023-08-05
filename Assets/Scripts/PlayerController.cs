@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
@@ -15,26 +16,37 @@ public class PlayerController : MonoBehaviour
 
     //Components
     private CharacterController controller;
+    private Camera _cam;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        _cam = Camera.main;
     }
 
     // Update is called once per frame
     void Update()
     {
         PlayerMovement();
+        PlayerShooting();
+    }
+
+    private static void PlayerShooting()
+    {
+        if (Input.GetButtonDown("Shoot"))
+        {
+            Weapon.instance.shoot();
+        }
     }
 
     private void PlayerMovement()
     {
+        Vector3 mousePos = Input.mousePosition;
+        mousePos = _cam.ScreenToWorldPoint(new Vector3(mousePos.x,mousePos.y,_cam.transform.position.y - transform.position.y));
+        targetRotation = Quaternion.LookRotation(mousePos - new Vector3(transform.position.x,0,transform.position.z));
+        transform.eulerAngles = Vector3.up * Mathf.MoveTowardsAngle(transform.eulerAngles.y, targetRotation.eulerAngles.y, _rotationSpeed * Time.deltaTime);
+
         Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-        if (input != Vector3.zero)
-        {
-            targetRotation = Quaternion.LookRotation(input);
-            transform.eulerAngles = Vector3.up * Mathf.MoveTowardsAngle(transform.eulerAngles.y, targetRotation.eulerAngles.y, _rotationSpeed * Time.deltaTime);
-        }
         if (Input.GetButton("Run"))
         {
             Vector3 motion = input.normalized * _runSpeed;
